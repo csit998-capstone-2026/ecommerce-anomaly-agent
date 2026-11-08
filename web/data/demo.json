@@ -1,0 +1,77 @@
+{
+  "dashboard": {
+    "provenance": "ui-demo-fixture",
+    "synthetic": true,
+    "run": {
+      "caseId": "DEMO-SKU-001",
+      "storeId": "演示门店 A",
+      "skuId": "SKU-DEMO-001",
+      "baselineWindow": { "start": "2026-10-01", "end": "2026-10-07" },
+      "anomalyWindow": { "start": "2026-10-08", "end": "2026-10-14" },
+      "verification": { "status": "supported", "reason": "库存归零先于销量快速下滑，访客量未出现同步下跌；仍需业务人员核对缺货记录。" },
+      "recommendation": "优先核对该 SKU 的缺货记录和到货时间，再评估补货安排；不要仅凭排序分数直接调整价格。",
+      "queryCount": 1
+    },
+    "series": [
+      { "date": "2026-10-01", "units_sold": 42, "visitors": 482, "stock_on_hand": 87, "price": 99, "promotion_active": 0 },
+      { "date": "2026-10-02", "units_sold": 45, "visitors": 503, "stock_on_hand": 77, "price": 99, "promotion_active": 0 },
+      { "date": "2026-10-03", "units_sold": 47, "visitors": 501, "stock_on_hand": 72, "price": 99, "promotion_active": 0 },
+      { "date": "2026-10-04", "units_sold": 44, "visitors": 489, "stock_on_hand": 63, "price": 99, "promotion_active": 0 },
+      { "date": "2026-10-05", "units_sold": 46, "visitors": 514, "stock_on_hand": 49, "price": 99, "promotion_active": 0 },
+      { "date": "2026-10-06", "units_sold": 43, "visitors": 496, "stock_on_hand": 32, "price": 99, "promotion_active": 0 },
+      { "date": "2026-10-07", "units_sold": 45, "visitors": 507, "stock_on_hand": 19, "price": 99, "promotion_active": 0 },
+      { "date": "2026-10-08", "units_sold": 20, "visitors": 492, "stock_on_hand": 4, "price": 99, "promotion_active": 0 },
+      { "date": "2026-10-09", "units_sold": 17, "visitors": 486, "stock_on_hand": 0, "price": 99, "promotion_active": 0 },
+      { "date": "2026-10-10", "units_sold": 10, "visitors": 495, "stock_on_hand": 0, "price": 99, "promotion_active": 0 },
+      { "date": "2026-10-11", "units_sold": 8, "visitors": 481, "stock_on_hand": 0, "price": 99, "promotion_active": 0 },
+      { "date": "2026-10-12", "units_sold": 9, "visitors": 476, "stock_on_hand": 3, "price": 99, "promotion_active": 0 },
+      { "date": "2026-10-13", "units_sold": 12, "visitors": 498, "stock_on_hand": 9, "price": 99, "promotion_active": 0 },
+      { "date": "2026-10-14", "units_sold": 14, "visitors": 505, "stock_on_hand": 13, "price": 99, "promotion_active": 0 }
+    ],
+    "causes": [
+      { "cause": "stockout", "score": 0.87, "explanation": "缺货时间与销量下滑高度重合；库存恢复后销量略有回升。" },
+      { "cause": "conversion_decline", "score": 0.38, "explanation": "访客保持稳定而成交减少，但可能由缺货共同解释。" },
+      { "cause": "traffic_decline", "score": 0.17, "explanation": "访客量未同步下跌，存在反对证据。" },
+      { "cause": "price_or_promotion_change", "score": 0.08, "explanation": "观察窗口内价格与促销状态未变化。" }
+    ],
+    "evidence": [
+      { "evidenceId": "E1", "cause": "stockout", "polarity": "supports", "explanation": "10 月 9—11 日库存为 0 件，紧随销量下滑。", "observationIds": ["stock-09", "stock-10", "stock-11"] },
+      { "evidenceId": "E2", "cause": "traffic_decline", "polarity": "contradicts", "explanation": "异常期访客量维持在对照期附近，不能用流量大幅下降解释销量变化。", "observationIds": ["visitors-01", "visitors-14"] },
+      { "evidenceId": "E3", "cause": "price_or_promotion_change", "polarity": "contradicts", "explanation": "价格保持 99 元，促销状态未改变。", "observationIds": ["price-01", "price-14"] }
+    ],
+    "sources": [
+      { "name": "订单销售表", "status": "ok", "updatedAt": "2026-10-15 01:20", "definition": "已支付订单中的商品件数" },
+      { "name": "商品流量表", "status": "ok", "updatedAt": "2026-10-15 02:00", "definition": "商品详情页去重访客" },
+      { "name": "库存快照", "status": "ok", "updatedAt": "2026-10-15 00:45", "definition": "每日结束时的可售库存" },
+      { "name": "价格与促销记录", "status": "ok", "updatedAt": "2026-10-15 00:30", "definition": "每日实际标价与活动开关" }
+    ],
+    "trace": [
+      { "title": "数据核验", "detail": "核对门店、SKU、日期窗口及指标单位。" },
+      { "title": "候选原因排序", "detail": "比较库存、访客、价格与促销的变化时序。" },
+      { "title": "定向补查", "detail": "补查缺货时段的库存快照。" },
+      { "title": "结论核验", "detail": "记录支持与反对证据，保留人工复核建议。" }
+    ]
+  },
+  "evaluations": {
+    "provenance": "ui-demo-values",
+    "synthetic": true,
+    "generatedAt": null,
+    "dataset": "仅用于界面展示的虚构案例",
+    "sampleSize": 5,
+    "split": "无真实训练/测试划分",
+    "modules": [
+      { "id": 1, "name": "任务调度与局部修复", "owner": "Yan Zhuo", "metrics": [{ "name": "无效重跑节点数", "unit": "个", "better": "lower", "baseline": 7, "full": 3, "ablation": 5, "ablationLabel": "去除局部修复" }] },
+      { "id": 2, "name": "动态上下文预算", "owner": "Yan Han", "metrics": [{ "name": "关键证据保留率", "unit": "%", "better": "higher", "baseline": 62, "full": 90, "ablation": 75, "ablationLabel": "去除内容密度估计" }] },
+      { "id": 3, "name": "工具调用决策", "owner": "Zheng Sitian", "metrics": [{ "name": "违规工具调用率", "unit": "%", "better": "lower", "baseline": 18, "full": 0, "ablation": 8, "ablationLabel": "去除业务风险规则" }] },
+      { "id": 4, "name": "多源原因排序", "owner": "Li Yiheng", "metrics": [{ "name": "Top-1 排序准确率", "unit": "%", "better": "higher", "baseline": 48, "full": 70, "ablation": 58, "ablationLabel": "去除反对证据" }] },
+      { "id": 5, "name": "结论核验与定向补查", "owner": "Li Zhen", "metrics": [{ "name": "有证据支撑结论率", "unit": "%", "better": "higher", "baseline": 55, "full": 77, "ablation": 64, "ablationLabel": "去除定向补查" }] }
+    ],
+    "cases": [
+      { "caseId": "DEMO-001", "skuId": "SKU-101", "scenario": "缺货", "goldCause": "stockout", "predictedCause": "stockout", "status": "correct", "verification": "supported", "fullQueries": 3 },
+      { "caseId": "DEMO-002", "skuId": "SKU-102", "scenario": "流量下降", "goldCause": "traffic_decline", "predictedCause": "traffic_decline", "status": "correct", "verification": "supported", "fullQueries": 2 },
+      { "caseId": "DEMO-003", "skuId": "SKU-103", "scenario": "缺失数据", "goldCause": "unknown", "predictedCause": null, "status": "abstained", "verification": "insufficient", "fullQueries": 4 },
+      { "caseId": "DEMO-004", "skuId": "SKU-104", "scenario": "价格变化", "goldCause": "price_or_promotion_change", "predictedCause": "conversion_decline", "status": "incorrect", "verification": "contradicted", "fullQueries": 3 },
+      { "caseId": "DEMO-005", "skuId": "SKU-105", "scenario": "流量与库存混合", "goldCause": "stockout", "predictedCause": "stockout", "status": "correct", "verification": "needs_data", "fullQueries": 4 }
+    ]
+  }
+}

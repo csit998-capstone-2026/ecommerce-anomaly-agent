@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f9fc" />
+    <title>电商经营异常诊断系统</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳转到正文</a>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="主导航">
+        <a class="brand" href="#assistant" aria-label="返回智能问答">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span><strong>商流诊断</strong><small>DIAGNOSIS AGENT</small></span>
+        </a>
+        <div class="nav-group-label">主导航</div>
+        <nav class="side-nav" aria-label="工作区切换">
+          <a class="active" href="#assistant" data-view="assistant" aria-current="page">智能问答</a>
+          <a href="#workbench" data-view="workbench">数据与诊断</a>
+          <a href="#experiments" data-view="experiments">算法实验</a>
+        </nav>
+        <div class="sidebar-bottom">
+          <span class="sidebar-caption">研究范围</span>
+          <strong>单店 · 单 SKU · 销量下降</strong>
+          <p>只读查询；结论附证据与不确定性。任务保存在本机内存，重启即清空。</p>
+        </div>
+      </aside>
+
+      <main id="main" class="main-content">
+        <header class="topbar">
+          <div class="breadcrumb">电商经营异常诊断 <span>/</span> <span id="breadcrumb-current">智能问答</span></div>
+          <div class="top-actions">
+            <span id="api-status" class="status-pill loading"><span class="status-dot"></span>正在加载</span>
+            <span id="updated-at" class="updated-at">—</span>
+          </div>
+        </header>
+
+        <div id="view-assistant" class="workspace-view">
+          <section id="assistant" class="assistant-page" aria-labelledby="assistant-heading">
+            <header class="assistant-header">
+              <span class="eyebrow"><span class="eyebrow-line"></span>REPORT ASSISTANT</span>
+              <h1 id="assistant-heading">问问经营诊断助手</h1>
+              <p>围绕单店单 SKU 的销量异常提问。完成诊断后可引用当前报告中的原因、证据、数据缺口与建议。</p>
+              <div id="assistant-mode" class="assistant-mode-badge" role="status" aria-live="polite">本地报告问答 · 大模型待接入</div>
+              <div class="assistant-context-bar"><span id="assistant-context" class="assistant-context">尚未关联诊断报告。可以先了解数据导入流程。</span><a id="assistant-workbench-link" href="#workbench">前往数据与诊断</a><a id="assistant-diagnosis-link" href="#diagnosis" hidden>查看当前报告证据</a></div>
+            </header>
+            <div id="assistant-messages" class="assistant-messages" role="log" aria-live="polite" aria-relevant="additions text" aria-label="问答消息">
+              <article class="assistant-message is-assistant"><strong>本地报告助手</strong><p>你好。这里提供基于结构化诊断报告的本地问答，尚未接入大模型。你可以先问如何导入数据；诊断完成后，我会引用报告中的证据回答。</p></article>
+            </div>
+            <div id="assistant-suggestions" class="assistant-suggestions" aria-label="快捷问题"><button type="button" data-question="如何上传经营数据？">如何上传经营数据？</button><button type="button" data-question="为什么销量下降？">为什么销量下降？</button><button type="button" data-question="主要证据有哪些？">主要证据有哪些？</button><button type="button" data-question="还需要补查哪些数据？">还需要补查哪些数据？</button></div>
+            <form id="assistant-form" class="assistant-composer"><label for="assistant-input" class="sr-only">输入经营诊断问题</label><textarea id="assistant-input" name="message" rows="2" maxlength="2000" placeholder="询问原因、证据、数据缺口或经营建议……" required></textarea><button id="assistant-send" class="primary-button" type="submit">发送</button><p id="assistant-feedback" role="status" aria-live="polite">本地结构化报告问答，回答需结合原始数据人工复核。</p></form>
+          </section>
+        </div>
+
+        <div id="view-workbench" class="workspace-view" hidden>
+          <section id="workbench" class="hero-section">
+            <div class="eyebrow"><span class="eyebrow-line"></span>ECOMMERCE DIAGNOSIS</div>
+            <div class="hero-heading-row">
+              <div>
+                <h1>电商经营异常诊断系统</h1>
+                <p class="hero-description">上传单店单 SKU 经营数据，预检后启动只读 Agent 诊断，查看原因、证据和经营建议。</p>
+              </div>
+              <a class="primary-link" href="#diagnosis" id="jump-result" hidden>查看诊断结果</a>
+            </div>
+            <div id="provenance-banner" class="provenance-banner" role="status" aria-live="polite">尚未提交数据。上传文件中的来源和合成标记属于上传者声明，系统不会自动核实真实业务来源。</div>
+          </section>
+
+          <section id="workflow" class="section-block workflow-section" aria-labelledby="workflow-heading">
+            <div class="section-heading"><div><span class="section-index">01 / WORKFLOW</span><h2 id="workflow-heading">发起经营诊断</h2><p>选择数据 → 检查数据质量 → 提交诊断。系统不会执行改价、补货等写操作。</p></div></div>
+            <div class="workflow-steps" aria-label="诊断步骤"><span>1 选择数据</span><span>2 数据预检</span><span>3 启动诊断</span><span>4 复核报告</span></div>
+            <div class="workflow-grid">
+              <article class="panel dataset-card">
+                <div class="panel-header"><div><h3>导入按日经营报表</h3><p>先填单店单 SKU 范围，再选择按日 CSV。各字段由业务报表提供；系统不会补造来源时间。</p></div></div>
+                <form id="csv-import-form" class="csv-import-form">
+                  <div class="csv-form-grid">
+                    <label for="csv-store-id">门店 ID<input id="csv-store-id" name="storeId" type="text" maxlength="128" autocomplete="off" required placeholder="例如 store-001" /></label>
+                    <label for="csv-sku-id">商品 SKU<input id="csv-sku-id" name="skuId" type="text" maxlength="128" autocomplete="off" required placeholder="例如 SKU-001" /></label>
+                    <label for="csv-baseline-start">对照期开始<input id="csv-baseline-start" name="baselineStart" type="date" required /></label>
+                    <label for="csv-baseline-end">对照期结束<input id="csv-baseline-end" name="baselineEnd" type="date" required /></label>
+                    <label for="csv-anomaly-start">异常期开始<input id="csv-anomaly-start" name="anomalyStart" type="date" required /></label>
+                    <label for="csv-anomaly-end">异常期结束<input id="csv-anomaly-end" name="anomalyEnd" type="date" required /></label>
+                    <label for="csv-source">数据来源名称<input id="csv-source" name="sourceName" type="text" maxlength="128" autocomplete="off" required placeholder="例如 商家后台销量报表" /></label>
+                    <label for="csv-synthetic">数据性质（仅自述）<select id="csv-synthetic" name="synthetic"><option value="">未声明</option><option value="false">真实业务数据（未核验）</option><option value="true">合成数据</option></select></label>
+                    <label for="csv-source-updated-at">数据源最后更新时间<input id="csv-source-updated-at" name="sourceUpdatedAt" type="datetime-local" step="1" required aria-describedby="csv-time-help" /></label>
+                    <label for="csv-exported-at">报表导出 / 获取时间<input id="csv-exported-at" name="fetchedAt" type="datetime-local" step="1" required aria-describedby="csv-time-help" /></label>
+                  </div>
+                  <p id="csv-time-help" class="csv-form-help">数据源最后更新时间须从业务系统元数据核对，报表导出 / 获取时间须来自实际导出记录；两者均按浏览器本地时区解释。未知时间不能用当前时间代替。</p>
+                  <label class="csv-file-field" for="csv-file">按日 CSV 文件<input id="csv-file" name="csvFile" type="file" accept=".csv,text/csv" required aria-describedby="csv-status" /><small>表头：date,units_sold,paid_orders,visitors,stock_on_hand,price,promotion_active。日期用 YYYY-MM-DD；促销用 0/1；真实的 0 与留空缺失不同。</small></label>
+                  <div class="csv-form-actions"><button id="csv-submit" class="primary-button" type="submit">载入 CSV 并预检</button><button id="csv-template" class="secondary-button" type="button">下载空白 CSV 模板</button></div>
+                  <p id="csv-status" class="import-status" role="status" aria-live="polite">不会用缺失值代替 0；导入后会调用本地服务做数据预检。</p>
+                </form>
+                <details class="advanced-json-import"><summary>高级方式：导入完整 JSON</summary>
+                  <div class="dataset-controls">
+                    <label class="import-button" for="dataset-file">上传 JSON<input id="dataset-file" type="file" accept=".json,application/json" aria-describedby="import-status" disabled /></label>
+                    <button id="load-example" class="secondary-button" type="button">载入合成示例</button>
+                    <button id="download-example" class="secondary-button" type="button">下载示例 JSON</button>
+                  </div>
+                  <div class="dataset-help"><p>JSON 需要 <code>diagnosisCase</code> 和 <code>observations[]</code>；顶层 <code>provenance</code> 与 <code>synthetic</code> 由上传者声明。下载示例后替换数据，并保持各记录的 caseId、storeId、skuId 一致。文件上限 1 MiB。</p></div>
+                </details>
+                <div id="dataset-summary" class="dataset-summary empty-state">尚未选择数据文件。</div>
+                <div id="dataset-declaration" class="dataset-declaration">来源：未声明；合成数据：未声明。系统不验证数据来源。</div>
+                <p id="import-status" class="import-status" role="status" aria-live="polite">数据预检和诊断在本地服务执行，不会自动上传到外部平台。</p>
+              </article>
+              <article id="validation-panel" class="panel validation-panel">
+                <div class="panel-header"><div><h3>数据质量预检</h3><p>按指标检查对照期与异常期覆盖、缺失及多来源冲突。</p></div><button id="validate-button" class="secondary-button" type="button" disabled>重新预检</button></div>
+                <div id="validation-summary" class="validation-summary empty-state" role="status" aria-live="polite">选择数据后显示预检结果。</div>
+                <div id="validation-metrics" class="validation-metrics"></div>
+              </article>
+            </div>
+            <article class="panel run-status-panel">
+              <div class="panel-header"><div><h3>诊断任务</h3><p>任务排队、执行和完成状态可追踪；记录只保存在本机内存。</p></div><button id="run-button" class="primary-button" type="button" disabled>开始诊断</button></div>
+              <div id="run-status" class="run-status" role="status" aria-live="polite">尚未提交诊断任务。</div>
+              <ol id="run-progress" class="run-progress" aria-label="任务进度"><li>等待提交</li><li>排队与执行</li><li>复核结论</li></ol>
+              <div id="run-error" class="run-error" role="alert" hidden></div>
+              <div class="run-actions"><button id="run-refresh" class="secondary-button" type="button" hidden>刷新任务状态</button><a id="report-link" class="export-link" href="#" download hidden>下载诊断报告 JSON</a></div>
+            </article>
+            <article class="panel run-history-panel">
+              <div class="panel-header"><div><h3>近期诊断任务</h3><p>最多保留服务内存中的有限记录；服务重启后历史清空。</p></div><button id="history-refresh" class="secondary-button" type="button">刷新列表</button></div>
+              <div id="run-history" class="run-history"></div>
+              <div id="history-empty" class="empty-state">暂无任务。请先选择数据并发起诊断。</div>
+            </article>
+          </section>
+
+          <div id="result-empty" class="panel result-empty"><h2>诊断结果将在这里显示</h2><p>完成数据预检并启动诊断后，可查看销量趋势、候选原因、证据、Agent 执行轨迹和完整报告。</p></div>
+          <section id="result-overview" class="result-overview" hidden>
+            <div class="section-heading"><div><span class="section-index">02 / RESULT</span><h2>本次诊断概览</h2><p>以下结果仅适用于当前门店、SKU 和所选时间窗口。</p></div></div>
+            <div class="scope-bar">
+              <div><span>门店</span><strong id="scope-store">—</strong></div>
+              <div><span>商品 SKU</span><strong id="scope-sku">—</strong></div>
+              <div><span>对照周期</span><strong id="scope-baseline">—</strong></div>
+              <div><span>异常周期</span><strong id="scope-anomaly">—</strong></div>
+            </div>
+            <div id="kpi-grid" class="kpi-grid" aria-label="诊断概览指标"></div>
+          </section>
+
+        <section id="diagnosis" class="section-block" hidden>
+          <div class="section-heading">
+            <div><span class="section-index">03 / DIAGNOSIS</span><h2>销量异常与证据链</h2><p>指标变化、候选原因和反对证据放在同一视图中。</p></div>
+            <span id="diagnosis-source" class="data-badge">—</span>
+          </div>
+          <div class="analysis-grid">
+            <article class="panel trend-panel">
+              <div class="panel-header"><div><h3>商品经营趋势</h3><p>按日聚合 · 鼠标悬停或聚焦数据点查看数值</p></div><div class="legend"><span><i class="legend-sales"></i>销量</span><span><i class="legend-visitors"></i>访客</span></div></div>
+              <div id="trend-chart" class="chart-wrap" aria-label="销量与访客的日趋势图"></div>
+              <div id="trend-note" class="panel-footnote"></div>
+              <details class="trend-data-details"><summary>查看按日经营数据表</summary><div class="table-scroll"><table class="trend-data-table"><caption class="sr-only">按日销量、访客、库存、价格与促销状态</caption><thead><tr><th scope="col">日期</th><th scope="col">销量</th><th scope="col">访客</th><th scope="col">库存</th><th scope="col">价格</th><th scope="col">促销</th><th scope="col">数据状态</th></tr></thead><tbody id="trend-rows"></tbody></table></div></details>
+            </article>
+            <article class="panel cause-panel">
+              <div class="panel-header"><div><h3>候选原因排序</h3><p>排序分数用于比较，不代表因果概率</p></div><span class="mini-tag">TOP 4</span></div>
+              <div id="cause-list" class="cause-list"></div>
+              <div id="verification-summary" class="verification-box"></div>
+            </article>
+          </div>
+          <div class="analysis-grid lower-grid">
+            <article class="panel evidence-panel"><div class="panel-header"><div><h3>关键证据</h3><p>支持与反对证据都应进入结论核验</p></div></div><div id="evidence-list" class="evidence-list"></div></article>
+            <article class="panel"><div class="panel-header"><div><h3>Agent 执行轨迹</h3><p>从数据核验到补查，再形成有边界的建议</p></div></div><ol id="trace-list" class="trace-list"></ol><div id="recommendation" class="recommendation"></div></article>
+          </div>
+        </section>
+
+        <section id="sources" class="section-block sources-section" hidden>
+          <div class="section-heading"><div><span class="section-index">04 / PROVENANCE</span><h2>数据来源与运行状态</h2><p>来源、更新时间和缺失状态随诊断一起记录，便于复核。</p></div></div>
+          <div class="analysis-grid source-grid"><article class="panel"><div class="panel-header"><div><h3>经营数据源</h3><p>“缺失”与业务数值 0 分开处理</p></div></div><div id="source-list" class="source-list"></div></article><article class="panel"><div class="panel-header"><div><h3>运行边界</h3><p>当前版本的适用范围与已知限制</p></div></div><div id="run-boundary" class="boundary-list"></div></article></div>
+          <footer class="footer">电商经营异常诊断系统 · 研究原型 <span>诊断建议需由业务人员复核</span></footer>
+        </section>
+        </div>
+
+        <div id="view-experiments" class="workspace-view" hidden>
+          <section id="experiments" class="hero-section experiments-hero"><div class="eyebrow"><span class="eyebrow-line"></span>ALGORITHM EVALUATION</div><h1>五模块算法实验</h1><p class="hero-description">对照普通基线、完整方法与关键消融；本区使用合成评测案例（已用于调试），不混入工作台上传的数据。</p><div id="experiment-provenance" class="provenance-banner demo" role="status" aria-live="polite">正在读取实验结果。合成案例不代表真实店铺效果。</div></section>
+
+        <section id="experiment-results" class="section-block experiments-section">
+          <div class="section-heading">
+            <div><span class="section-index">01 / EVALUATION</span><h2>模块指标与消融</h2><p>每个模块均展示普通基线、完整方法与关键消融。</p></div>
+            <span id="evaluation-source" class="data-badge">—</span>
+          </div>
+          <div id="evaluation-meta" class="evaluation-meta"></div>
+          <article id="stress-panel" class="panel stress-panel" hidden>
+            <div class="stress-heading"><div><span class="section-index">STRESS / BOUNDARY</span><h3>跨模块压力检查</h3><p>固定手工场景的机制与边界检查；通过率不是业务诊断准确率。</p></div><div id="stress-summary" class="stress-count"></div></div>
+            <div id="stress-failures" class="stress-failures"></div>
+          </article>
+          <div class="panel experiment-panel">
+            <div class="table-header"><div><h3>核心指标对照</h3><p>同模块方法共享输入与评价规则；比率指标显示百分点差，其他指标显示相对变化。</p></div><span class="mini-tag">BASELINE / FULL / ABLATION</span></div>
+            <div class="table-scroll"><table class="experiment-table"><caption class="sr-only">五个算法模块的基线、完整方法、消融方法指标</caption><thead><tr><th scope="col">模块 / 负责人</th><th scope="col">核心指标</th><th scope="col">普通基线</th><th scope="col">完整方法</th><th scope="col">关键消融</th><th scope="col">相对变化</th></tr></thead><tbody id="module-rows"></tbody></table></div>
+          </div>
+          <div class="module-detail-grid">
+            <article class="panel"><div class="panel-header"><div><h3>方法对照</h3><p>选择模块查看各算法版本</p></div><select id="module-select" aria-label="选择实验模块"></select></div><div id="module-chart" class="module-chart"></div></article>
+            <article class="panel methodology-panel"><div class="panel-header"><div><h3>实验复核清单</h3><p>以下事项需要逐项审查；页面不表示已经通过。</p></div></div><ul id="methodology-list" class="check-list"></ul></article>
+          </div>
+        </section>
+
+        <section id="cases" class="section-block">
+          <div class="section-heading"><div><span class="section-index">02 / CASES</span><h2>案例与错误分析</h2><p>保留失败样例，用于检查方法是否只在少数简单情形有效。</p></div><div class="section-actions"><a id="case-export" class="export-link" href="/api/evaluations/cases.csv" download="synthetic-evaluation-cases.csv" hidden>导出合成评测 CSV</a><span id="case-count" class="data-badge">—</span></div></div>
+          <div class="panel cases-panel"><div class="table-header case-toolbar"><div><h3>评测案例</h3><p>程序评测结果显示完整查询指标数；无证据结论会标明“保留判断”。</p></div><div class="filters"><input id="case-search" type="search" placeholder="搜索案例 ID / SKU" aria-label="搜索案例" /><select id="case-filter" aria-label="筛选评测结果"><option value="all">全部结果</option><option value="correct">正确</option><option value="incorrect">错误</option><option value="abstained">未下结论</option></select></div></div><div class="table-scroll"><table class="cases-table"><caption class="sr-only">诊断案例及预测结果</caption><thead><tr><th scope="col">案例 / SKU</th><th scope="col">场景</th><th scope="col">标注原因</th><th scope="col">系统结论</th><th scope="col">结果</th><th scope="col">查询指标数</th></tr></thead><tbody id="case-rows"></tbody></table></div><div id="case-empty" class="empty-state" hidden>没有符合条件的案例。</div></div>
+        </section>
+
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

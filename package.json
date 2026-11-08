@@ -1,0 +1,16 @@
+{
+  "name": "ecommerce-anomaly-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.ts",
+    "dev": "node src/server.ts",
+    "eval": "node eval/run.ts",
+    "diagnose": "node src/cli.ts",
+    "example": "node scripts/export-example.ts"
+  }
+}
